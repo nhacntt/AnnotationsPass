@@ -11,25 +11,31 @@ using namespace llvm;
 
 namespace {
 	struct AnnotationsPass : public FunctionPass {
+		std::map<string, FuncDecl> FuncDeclMap;
 		static char ID;
-		AnnotationsPass() : FunctionPass(ID) {}
+
+		AnnotationsPass() : FunctionPass(ID) {
+
+		auto F=FuncDeclList::fromYAML(MetaFilename);
+		if (std::error_code ec = F.getError()) {
+			errs()<<ec.message();
+			return;
+		}
+
+		FuncDeclList FL=F.get();
+
+		for (const auto& i:FL) {
+			FuncDeclMap.insert(std::make_pair(i->MangledName,*i)
+		}
 
 		virtual bool runOnFunction(Function &F){
+			if (FuncDeclMap.empty()) {
+				return false;
 			for (auto& B:F){
 				for (auto& I:B){
 					if (isa<CallInst>(I)) {
 						Function* func =cast<CallInst>(I).getCalledFunction();
-						if(func->getName()=="llvm.var.annotation"){
-        /*
-							GlobalVariable* annotationStrVar = dyn_cast<GlobalVariable>(I.getOperand(1)->stripPointerCasts());
-	//errs()<<*annotationStrVar;
-        ConstantDataArray* annotationStrValArray = dyn_cast<ConstantDataArray> (annotationStrVar->getInitializer());
-
-        StringRef annotationStrValCString = annotationStrValArray->getAsCString();
-							errs()<<annotationStrValCString.data();
-							*/
-							auto anno= cast<GlobalVariable*>(I.getOperand(1)->stripPointerCasts())->getInitializer();
-							errs()<<anno.getName();
+							
 						}
 					}
 				}
@@ -38,8 +44,8 @@ namespace {
 			return false;
 		}
   	};
-}
+}// namespace
 
 char AnnotationsPass::ID = 0;
-static RegisterPass<AnnotationsPass> X("AnnotationsPass", "LLVM Annotations Pass", false, false);
+static RegisterPass<AnnotationsPass> X("AnnotationsPass", "LLVM Annotations Pass");
 
