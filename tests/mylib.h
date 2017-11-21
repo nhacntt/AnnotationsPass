@@ -1,10 +1,9 @@
-#include "llvm_annotations.h"
-//#include <iostream>
+#pragma once
+#include "../include/ProvAnnotations.hh"
+#include <cstdlib>
 
-__df(1,0)
-__df(2,0)
+_SOURCE_
+int m_read(int fildes, _OUT_ void *buf, size_t nbyte);
 
-void foo(__Anno1 __Anno2 int a,__Anno3 int b, int c);//{b<-a,c b=a+c;}
-	
-
-__Anno1 void bar(int x, __Anno2 int y);
+_SINK_
+int m_write(int fildes, _IN_ const void *buf, size_t nbyte);
