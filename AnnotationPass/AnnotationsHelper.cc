@@ -4,6 +4,19 @@
 using namespace std;
 using namespace llvm;
 
+FuncDeclList getFuncListfromYAML(string Filename){
+	FuncDeclList FL;
+	auto F=FuncDeclList::fromYAML(Filename);
+		
+	if (std::error_code ec = F.getError()) 
+		errs()<<ec.message();
+	else 
+		FL=F.get();
+		
+	return FL;
+}
+
+
 map<string,vector<int>> getInputArgMap(FuncDeclList& FL){
 	map<string,vector<int>> InputArgMap;
 

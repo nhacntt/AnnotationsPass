@@ -11,6 +11,7 @@
 using namespace std;
 using namespace llvm;
 
+FuncDeclList getFuncListfromYAML(string Filename);
 map<string,vector<int>> getInputArgMap(FuncDeclList& FL);
 map<string,vector<int>> getOutputArgMap(FuncDeclList& FL);
 StringSet<> getExplicitSourceNames(FuncDeclList& FL);

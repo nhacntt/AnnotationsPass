@@ -29,7 +29,8 @@ AnnotationCallSemantics::AnnotationCallSemantics(FuncDeclList& FL):AnnotationCal
 
 	
 
-//AnnotationCallSemantics::AnnotationCallSemantics(FuncDeclList& FL){};
+AnnotationCallSemantics::AnnotationCallSemantics(string Filenme):AnnotationCallSemantics(getFuncListfromYAML(Filename)){};
+
 
 SmallVector<Value*, 2> AnnotationCallSemantics::CallOutputs(CallInst* Call) const {
 	SmallVector<Value*, 2> Outputs = { Call };
