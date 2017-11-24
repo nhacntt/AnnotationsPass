@@ -25,11 +25,11 @@ cl::opt<string> InputYAML("yaml-file", cl::desc("Specify YAML input filename"), 
 			//if (CS ==NULL) return false;
 			
 			errs()<<F.getName()<<"\n";
-			F.dump();
+			//F.dump();
 			for (auto& B:F){
 				for (auto& I:B){
 					if (auto* CI=dyn_cast<CallInst>(&I)) {
-						CI->dump();
+						//CI->dump();
 						errs() << "\nOutput Parameters:";
 						//for (const auto& ArgNum:CS->CallOutputs(CI)) errs() << ArgNum << "\t";
 						//errs() << "\nSource:" << CS->IsSource(CI);

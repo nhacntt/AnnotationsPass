@@ -1,6 +1,9 @@
+#pragma once
 #include "../include/ProvAnnotations.hh"
-//#include <iostream>
+#include <cstdlib>
 
-void foo(_IN_ int a,_OUT_ int b, int c);	
+_SOURCE_
+int m_read(int fildes, _OUT_ void *buf, size_t nbyte);
 
-_SINK_ void bar(int x, _IN_ int y);
+_SINK_
+int m_write(int fildes, _IN_ const void *buf, size_t nbyte);

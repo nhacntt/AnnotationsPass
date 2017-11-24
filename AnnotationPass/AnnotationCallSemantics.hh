@@ -36,7 +36,7 @@ class AnnotationCallSemantics : public prov::CallSemantics{
 								const StringSet<>,
 								const StringSet<>);
 
-  		AnnotationCallSemantics(FuncDeclList& FL);
+  		AnnotationCallSemantics(FuncDeclList FL);
 
 };
 
