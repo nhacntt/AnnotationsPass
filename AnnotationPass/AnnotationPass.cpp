@@ -17,31 +17,19 @@ cl::opt<std::string> InputYAML("yaml-file", cl::desc("Specify YAML input filenam
 	
 		static char ID;
 
-		//AnnotationCallSemantics* CS;
+		AnnotationCallSemantics CS;
 
-		AnnotationPass() : FunctionPass(ID) {
-/*
-			auto F=FuncDeclList::fromYAML(InputYAML);
-		
-			if (std::error_code ec = F.getError()) {
-				errs()<<ec.message();
-				return;
-			}
-
-			FuncDeclList FL=F.get();
-			CS= new AnnotationCallSemantics(FL);;
-*/
-		}
+		AnnotationPass() : FunctionPass(ID),CS(InputYAML) {}
 
 		virtual bool runOnFunction(Function &F){
 			//if (CS ==NULL) return false;
 			
 			errs()<<F.getName()<<"\n";
-			F.dump();
+			//F.dump();
 			for (auto& B:F){
 				for (auto& I:B){
 					if (auto* CI=dyn_cast<CallInst>(&I)) {
-						CI->dump();
+						//CI->dump();
 						errs() << "\nOutput Parameters:";
 						//for (const auto& ArgNum:CS->CallOutputs(CI)) errs() << ArgNum << "\t";
 						//errs() << "\nSource:" << CS->IsSource(CI);

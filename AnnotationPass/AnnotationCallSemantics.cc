@@ -22,14 +22,15 @@ AnnotationCallSemantics::AnnotationCallSemantics(	const map<string,vector<int>> 
 																ExplicitSinkNames(SinkNames)
 																{};
 
-AnnotationCallSemantics::AnnotationCallSemantics(FuncDeclList& FL):AnnotationCallSemantics(	getInputArgMap(FL),
+AnnotationCallSemantics::AnnotationCallSemantics(FuncDeclList FL):AnnotationCallSemantics(	getInputArgMap(FL),
 																							getOutputArgMap(FL),
 																							getExplicitSourceNames(FL),
 																							getExplicitSinkNames(FL)){};
 
 	
 
-//AnnotationCallSemantics::AnnotationCallSemantics(FuncDeclList& FL){};
+AnnotationCallSemantics::AnnotationCallSemantics(string Filename):AnnotationCallSemantics(getFuncListfromYAML(Filename)){};
+
 
 SmallVector<Value*, 2> AnnotationCallSemantics::CallOutputs(CallInst* Call) const {
 	SmallVector<Value*, 2> Outputs = { Call };

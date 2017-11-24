@@ -19,12 +19,7 @@ class AnnotationCallSemantics : public prov::CallSemantics{
 	public:
   		AnnotationCallSemantics()=default;
 		
-		AnnotationCallSemantics(const map<string,vector<int>>,
-								const map<string,vector<int>>,
-								const StringSet<>,
-								const StringSet<>);
-
-  		AnnotationCallSemantics(FuncDeclList& FL);
+  		AnnotationCallSemantics(string Filename);
 
   		SmallVector<Value*, 2> CallOutputs(CallInst*) const override;
   		bool IsSource(const CallInst*) const override;
@@ -35,6 +30,13 @@ class AnnotationCallSemantics : public prov::CallSemantics{
 		const map<string,vector<int>> OutputArgMap;
 		const StringSet<> ExplicitSourceNames;
 		const StringSet<> ExplicitSinkNames;
+
+		AnnotationCallSemantics(const map<string,vector<int>>,
+								const map<string,vector<int>>,
+								const StringSet<>,
+								const StringSet<>);
+
+  		AnnotationCallSemantics(FuncDeclList FL);
 
 };
 
