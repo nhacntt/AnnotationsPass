@@ -11,7 +11,7 @@
 
 using namespace llvm;
 
-cl::opt<string> InputYAML("yaml-file", cl::desc("Specify YAML input filename"), cl::value_desc("filename"));
+cl::opt<std::string> InputYAML("yaml-file", cl::desc("Specify YAML input filename"), cl::value_desc("filename"));
 
 	struct AnnotationPass : public FunctionPass {
 	
