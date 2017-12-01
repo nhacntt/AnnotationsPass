@@ -21,19 +21,25 @@ cl::opt<std::string> InputYAML("yaml-file", cl::desc("Specify YAML input filenam
 
 		AnnotationPass() : FunctionPass(ID),CS(InputYAML) {}
 
-		virtual bool runOnFunction(Function &F){
-			//if (CS ==NULL) return false;
-			
-			errs()<<F.getName()<<"\n";
-			//F.dump();
+		virtual bool runOnFunction(Function &F){;
+			F.dump();
+			if (InputYAML=="") {
+				errs()<<"No YAML file.\n";
+				return false;
+			}
 			for (auto& B:F){
 				for (auto& I:B){
 					if (auto* CI=dyn_cast<CallInst>(&I)) {
-						//CI->dump();
-						errs() << "\nOutput Parameters:";
-						//for (const auto& ArgNum:CS->CallOutputs(CI)) errs() << ArgNum << "\t";
-						//errs() << "\nSource:" << CS->IsSource(CI);
-						//errs() << "\nSource:" << CS->IsSource(CI) <<"\n";
+						auto CallOutputs=CS.CallOutputs(CI);
+						for (const auto& ArgNum:CallOutputs) {
+							if (const auto& CallIn =dyn_cast<CallInst>(ArgNum)){
+								errs()<<CallIn->getCalledFunction()->getName()<<":";
+							} 
+							else ArgNum->dump();
+						}
+							//errs() << ArgNum << "\t";
+						errs() << "\nSource:" << (CS.IsSource(CI)?"yes":"no");
+						errs() << "\nSink:" << (CS.CanSink(CI)?"yes":"no:") <<"\n\n";
 					}
 				}
 			}

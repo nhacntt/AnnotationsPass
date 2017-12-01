@@ -1,18 +1,19 @@
 #include "AnnotationsHelper.hh"
-
+#include <sstream>
+#include <algorithm>
 
 using namespace std;
 using namespace llvm;
 
 FuncDeclList getFuncListfromYAML(string Filename){
 	FuncDeclList FL;
-	auto F=FuncDeclList::fromYAML(Filename);
-		
+	
+	auto F=FL.fromYAML(Filename);		
 	if (std::error_code ec = F.getError()) 
 		errs()<<ec.message();
 	else 
 		FL=F.get();
-		
+
 	return FL;
 }
 
@@ -22,14 +23,13 @@ map<string,vector<int>> getInputArgMap(FuncDeclList& FL){
 
 	for (const auto& FD:FL.List) {
 		vector<int> ArgVec;
-		for (const auto& P:FD.ParamVec) {
-			auto Annotations=P.Annotations;
-			for (int i = 0; i< Annotations.size(); ++i) {
-				if (Annotations[i]==INPUT_ANNOTATION) {
-					ArgVec.push_back(i);
-				}
+		for (auto it=FD.ParamVec.begin(); it != FD.ParamVec.end(); ++it) {
+			auto Annotations=it->Annotations;
+			if (find(Annotations.begin(), Annotations.end(),INPUT_ANNOTATION)!=Annotations.end()) {
+				ArgVec.push_back(it-FD.ParamVec.begin());
 			}
 		}
+	
 		
 		if (not ArgVec.empty()) {
 			InputArgMap.insert(make_pair(FD.MangledName,ArgVec));
@@ -43,16 +43,13 @@ map<string,vector<int>> getOutputArgMap(FuncDeclList& FL) {
 
 	for (const auto& FD:FL.List) {
 		vector<int> ArgVec;
-		for (const auto& P:FD.ParamVec) {
-			auto Annotations=P.Annotations;
-			for (int i = 0; i< Annotations.size(); ++i) {
-				if (Annotations[i]==OUTPUT_ANNOTATION) {
-					ArgVec.push_back(i);
-				}
+		for (auto it=FD.ParamVec.begin(); it != FD.ParamVec.end(); ++it) {
+			auto Annotations=it->Annotations;
+			if (find(Annotations.begin(), Annotations.end(),OUTPUT_ANNOTATION)!=Annotations.end()) {
+				ArgVec.push_back(it-FD.ParamVec.begin());
 			}
 		}
-		
-
+	
 		if (not ArgVec.empty()) {
 			OutputArgMap.insert(make_pair(FD.MangledName,ArgVec));
 		}
@@ -65,13 +62,11 @@ StringSet<> getExplicitSourceNames(FuncDeclList& FL) {
 	StringSet<> SourceNames;
 
 	for (const auto& FD:FL.List) {
-		for (const auto& A:FD.Annotations) {
-			if (A==SOURCE_ANNO){
-				SourceNames.insert(A);
-			}
+		auto Annotations = FD.Annotations;
+		if (find(Annotations.begin(), Annotations.end(),SOURCE_ANNO)!=Annotations.end()) {
+			SourceNames.insert(FD.MangledName);
 		}
 	}
-	
 	return SourceNames;
 }
 
@@ -79,13 +74,17 @@ StringSet<> getExplicitSinkNames(FuncDeclList& FL) {
 	StringSet<> SinkNames;
 
 	for (const auto& FD:FL.List) {
-		for (const auto& A:FD.Annotations) {
-			if (A==SINK_ANNO){
-				SinkNames.insert(A);
-			}
+		auto Annotations = FD.Annotations;
+		if (find(Annotations.begin(), Annotations.end(),SINK_ANNO)!=Annotations.end()) {
+			SinkNames.insert(FD.MangledName);
 		}
 	}
 	
 	return SinkNames;
 }
 
+string vector2Str(vector<int> my_vector){
+	stringstream result;
+	copy(my_vector.begin(), my_vector.end(), std::ostream_iterator<int>(result, " "));
+	return result.str().c_str();
+}

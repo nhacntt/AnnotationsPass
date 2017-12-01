@@ -4,6 +4,7 @@
 #include <llvm/IR/Instructions.h>
 #include <llvm/ADT/StringRef.h>
 
+//#define DEBUG
 using namespace std;
 using namespace llvm;
 
@@ -29,23 +30,38 @@ AnnotationCallSemantics::AnnotationCallSemantics(FuncDeclList FL):AnnotationCall
 
 	
 
-AnnotationCallSemantics::AnnotationCallSemantics(string Filename):AnnotationCallSemantics(getFuncListfromYAML(Filename)){};
-
+AnnotationCallSemantics::AnnotationCallSemantics(string Filename):AnnotationCallSemantics(getFuncListfromYAML(Filename)){
+#ifdef DEBUG
+	errs()<<"Initializing CallSemantic...\n";
+	errs()<<"Input arguments:\n";
+	for (const auto& e:InputArgMap){
+		errs()<<"\t"<<e.first<<":"<<vector2Str(e.second)<<"\n";
+	}
+	errs()<<"Output arguments:\n";
+	for (const auto& e:OutputArgMap){
+		errs()<<"\t"<<e.first<<":"<<vector2Str(e.second)<<"\n";
+	}
+	errs()<<"Source names: ";
+	for (const auto& e:ExplicitSourceNames) errs()<<e.getKey()<<", ";
+	errs()<<"\nSink names: ";
+	for (const auto& e:ExplicitSinkNames) errs()<<e.getKey()<<", ";
+	errs()<<"\n";
+#endif
+};
 
 SmallVector<Value*, 2> AnnotationCallSemantics::CallOutputs(CallInst* Call) const {
 	SmallVector<Value*, 2> Outputs = { Call };
 	
 	Function *F = Call->getCalledFunction();
 	if (not F or not F->hasName()) {
-    	return Outputs;
+    		return Outputs;
 	}
 
   	StringRef FnName = F->getName();
   	auto i = OutputArgMap.find(FnName);
   	if (i == OutputArgMap.end()) {
-    	return Outputs;
+    		return Outputs;
   	}
-
   	const vector<int> ArgVec = i->second;
   	for (const auto& ArgNum:ArgVec){
   		if (ArgNum >= Call->getNumArgOperands()) {
@@ -59,17 +75,15 @@ SmallVector<Value*, 2> AnnotationCallSemantics::CallOutputs(CallInst* Call) cons
   		}
 
 		Outputs.push_back(Call->getArgOperand(ArgNum));
-
 	}
 
 	return Outputs;
 }
 
-
 bool AnnotationCallSemantics::IsSource(const CallInst *Call) const {
 	Function *F = Call->getCalledFunction();
 	if (not (F and F->hasName())) {
-    	return false;
+    		return false;
   	}
 	StringRef FnName = F->getName();
 
@@ -81,7 +95,7 @@ bool AnnotationCallSemantics::IsSource(const CallInst *Call) const {
 bool AnnotationCallSemantics::CanSink(const CallInst *Call) const {
 	Function *F = Call->getCalledFunction();
 	if (not (F and F->hasName())) {
-    	return false;
+    		return false;
   	}
 	StringRef FnName = F->getName();
 

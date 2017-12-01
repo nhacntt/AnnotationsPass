@@ -4,7 +4,7 @@ add_library(AnnotationPass MODULE
 	AnnotationsHelper.cc
     AnnotationPass.cpp
 )
-
+target_link_libraries(AnnotationPass libLLVMAnalysis.a)
 # Use C++11 to compile our pass (i.e., supply -std=c++11).
 target_compile_features(AnnotationPass PRIVATE cxx_range_for cxx_auto_type)
 
